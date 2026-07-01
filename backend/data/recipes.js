@@ -1,4 +1,3 @@
-// ── RECIPE DATA ──
 const recipes = [
   {
     id: 1,
@@ -114,8 +113,7 @@ const recipes = [
     description: "Classic Neapolitan pizza with tomato and mozzarella.",
     ingredients: [
       "Pizza dough", "1 cup tomato sauce", "200g fresh mozzarella",
-      "Fresh basil leaves", "Olive oil", "Salt",
-      "Pinch of sugar"
+      "Fresh basil leaves", "Olive oil", "Salt", "Pinch of sugar"
     ],
     steps: [
       "Preheat oven to 250°C (max temperature) for 30 minutes.",
@@ -128,115 +126,4 @@ const recipes = [
   }
 ];
 
-// filter buttons
-const filterBtns = document.querySelectorAll('.filter-btn');
-const recipeCards = document.querySelectorAll('.recipe-card');
-
-filterBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    filterBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const selected = btn.dataset.cuisine;
-    recipeCards.forEach(card => {
-      card.style.display =
-        selected === 'all' || card.dataset.cuisine === selected
-          ? 'block' : 'none';
-    });
-  });
-});
-
-// Hamburger menu toggle
-const menuBtn = document.querySelector('.menu-btn');
-const navLinks = document.querySelector('.nav-links');
-menuBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
-
-//Detail page
-const mainPage   = document.getElementById('main-page');
-const detailPage = document.getElementById('detail-page');
-const backBtn    = document.getElementById('back-btn');
-const detailImg  = document.getElementById('detail-img');
-const detailName = document.getElementById('detail-name');
-const detailCountry   = document.getElementById('detail-country');
-const ingredientsList = document.getElementById('ingredients-list');
-const stepsList       = document.getElementById('steps-list');
-
-// Open detail page when View Recipe is clicked
-document.querySelectorAll('.view-btn').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const card = btn.closest('.recipe-card');
-    const id = parseInt(card.dataset.id);
-    const recipe = recipes.find(r => r.id === id);
-    openDetail(recipe);
-  });
-});
-
-function openDetail(recipe) {
-  detailImg.src = recipe.img;
-  detailImg.alt = recipe.name;
-  detailName.textContent = recipe.name;
-  detailCountry.textContent = `🌍 ${recipe.country}`;
-
-  ingredientsList.innerHTML = recipe.ingredients
-    .map(i => `<li>${i}</li>`).join('');
-
-  stepsList.innerHTML = recipe.steps
-    .map(s => `<li>${s}</li>`).join('');
-
-  mainPage.classList.add('hidden');
-  detailPage.classList.remove('hidden');
-  window.scrollTo(0, 0);
-}
-
-// Back button
-backBtn.addEventListener('click', () => {
-  detailPage.classList.add('hidden');
-  mainPage.classList.remove('hidden');
-  window.scrollTo(0, 0);
-});
-
-//parallax effect
-const parallaxHero = document.getElementById('parallax-hero');
-const detailImgEl  = document.getElementById('detail-img');
-
-detailPage.addEventListener('scroll', () => {
-  const scrolled = detailPage.scrollTop;
-  detailImgEl.style.transform = `translateY(${scrolled * 0.4}px)`;
-});
-
-window.addEventListener('scroll', () => {
-  if (!detailPage.classList.contains('hidden')) {
-    const scrolled = window.scrollY;
-    detailImgEl.style.transform = `translateY(${scrolled * 0.4}px)`;
-  }
-});
-
-//Scroll reveal effect
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
-  });
-}, { threshold: 0.15 });
-
-recipeCards.forEach(card => observer.observe(card));
-
-//Hero Search
-const heroSearchInput = document.getElementById('hero-search-input');
-const heroSearchBtn = document.getElementById('hero-search-btn');
-
-function performHeroSearch() {
-  const query = heroSearchInput.value.toLowerCase().trim();
-  document.getElementById('recipes').scrollIntoView({ behavior: 'smooth' });
-
-  recipeCards.forEach(card => {
-    const name = card.querySelector('h3').textContent.toLowerCase();
-    card.style.display = query === '' || name.includes(query) ? 'block' : 'none';
-  });
-}
-
-heroSearchBtn.addEventListener('click', performHeroSearch);
-heroSearchInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') performHeroSearch();
-});
+module.exports = recipes;

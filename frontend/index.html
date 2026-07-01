@@ -56,70 +56,12 @@
             <button class="filter-btn" data-cuisine="italian">Italian</button>
             <button class="filter-btn" data-cuisine="chinese">Chinese</button>
             <button class="filter-btn" data-cuisine="mexican">Mexican</button>
+            <button class="filter-btn" data-cuisine="japanese">Japanese</button>
+            <button class="filter-btn" data-cuisine="american">American</button>
           </div>
 
-          <div class="recipes-grid">
-
-            <article class="recipe-card" data-cuisine="indian" data-id="1">
-              <img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400" alt="Butter Chicken" />
-              <div class="card-body">
-                <span class="tag">Indian</span>
-                <h3>Butter Chicken</h3>
-                <p>Creamy tomato-based curry with tender chicken.</p>
-                <button class="view-btn">View Recipe →</button>
-              </div>
-            </article>
-
-            <article class="recipe-card" data-cuisine="italian" data-id="2">
-              <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400" alt="Pasta Carbonara" />
-              <div class="card-body">
-                <span class="tag">Italian</span>
-                <h3>Pasta Carbonara</h3>
-                <p>Silky egg and cheese sauce with crispy pancetta.</p>
-                <button class="view-btn">View Recipe →</button>
-              </div>
-            </article>
-
-            <article class="recipe-card" data-cuisine="chinese" data-id="3">
-              <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400" alt="Kung Pao Chicken" />
-              <div class="card-body">
-                <span class="tag">Chinese</span>
-                <h3>Kung Pao Chicken</h3>
-                <p>Spicy stir-fried chicken with peanuts and chili.</p>
-                <button class="view-btn">View Recipe →</button>
-              </div>
-            </article>
-
-            <article class="recipe-card" data-cuisine="mexican" data-id="4">
-              <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400" alt="Tacos" />
-              <div class="card-body">
-                <span class="tag">Mexican</span>
-                <h3>Street Tacos</h3>
-                <p>Soft corn tortillas loaded with seasoned meat and salsa.</p>
-                <button class="view-btn">View Recipe →</button>
-              </div>
-            </article>
-
-            <article class="recipe-card" data-cuisine="indian" data-id="5">
-              <img src="https://images.unsplash.com/photo-1574653853027-5382a3d23a15?w=400" alt="Biryani" />
-              <div class="card-body">
-                <span class="tag">Indian</span>
-                <h3>Chicken Biryani</h3>
-                <p>Fragrant basmati rice layered with spiced chicken.</p>
-                <button class="view-btn">View Recipe →</button>
-              </div>
-            </article>
-
-            <article class="recipe-card" data-cuisine="italian" data-id="6">
-              <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400" alt="Margherita Pizza" />
-              <div class="card-body">
-                <span class="tag">Italian</span>
-                <h3>Margherita Pizza</h3>
-                <p>Classic Neapolitan pizza with tomato and mozzarella.</p>
-                <button class="view-btn">View Recipe →</button>
-              </div>
-            </article>
-
+          <div class="recipes-grid" id="recipes-grid">
+            <!-- Cards loaded dynamically from API -->
           </div>
         </section>
 
