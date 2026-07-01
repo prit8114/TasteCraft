@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TasteCraft | Discover Recipes</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+
+    <!-- Main page -->
+    <div id="main-page">
+
+      <header>
+        <nav class="navbar">
+          <span class="logo">🍴 TasteCraft</span>
+          <ul class="nav-links">
+            <li><a href="#recipes">Recipes</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+          <button class="menu-btn" aria-label="Toggle menu">☰</button>
+        </nav>
+      </header>
+
+      <main>
+
+        <section id="hero">
+          <div class="hero-overlay-pattern"></div>
+
+          <div class="hero-content">
+            <span class="hero-badge">🌍 Recipes from around the world</span>
+            <h1>Discover Recipes<br>You'll <span class="highlight">Love</span></h1>
+            <p>Explore dishes from around the world — filtered by cuisine, made for everyone.</p>
+
+            <div class="hero-search">
+              <input type="text" id="hero-search-input" placeholder="Search for a recipe..." />
+              <button id="hero-search-btn">Search</button>
+            </div>
+
+            <div class="hero-stats">
+              <div class="stat"><strong>6+</strong><span>Recipes</span></div>
+              <div class="stat"><strong>4</strong><span>Cuisines</span></div>
+              <div class="stat"><strong>100%</strong><span>Free</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="recipes">
+          <h2>Browse Recipes</h2>
+
+          <div class="filters">
+            <button class="filter-btn active" data-cuisine="all">All</button>
+            <button class="filter-btn" data-cuisine="indian">Indian</button>
+            <button class="filter-btn" data-cuisine="italian">Italian</button>
+            <button class="filter-btn" data-cuisine="chinese">Chinese</button>
+            <button class="filter-btn" data-cuisine="mexican">Mexican</button>
+          </div>
+
+          <div class="recipes-grid">
+
+            <article class="recipe-card" data-cuisine="indian" data-id="1">
+              <img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400" alt="Butter Chicken" />
+              <div class="card-body">
+                <span class="tag">Indian</span>
+                <h3>Butter Chicken</h3>
+                <p>Creamy tomato-based curry with tender chicken.</p>
+                <button class="view-btn">View Recipe →</button>
+              </div>
+            </article>
+
+            <article class="recipe-card" data-cuisine="italian" data-id="2">
+              <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400" alt="Pasta Carbonara" />
+              <div class="card-body">
+                <span class="tag">Italian</span>
+                <h3>Pasta Carbonara</h3>
+                <p>Silky egg and cheese sauce with crispy pancetta.</p>
+                <button class="view-btn">View Recipe →</button>
+              </div>
+            </article>
+
+            <article class="recipe-card" data-cuisine="chinese" data-id="3">
+              <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400" alt="Kung Pao Chicken" />
+              <div class="card-body">
+                <span class="tag">Chinese</span>
+                <h3>Kung Pao Chicken</h3>
+                <p>Spicy stir-fried chicken with peanuts and chili.</p>
+                <button class="view-btn">View Recipe →</button>
+              </div>
+            </article>
+
+            <article class="recipe-card" data-cuisine="mexican" data-id="4">
+              <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400" alt="Tacos" />
+              <div class="card-body">
+                <span class="tag">Mexican</span>
+                <h3>Street Tacos</h3>
+                <p>Soft corn tortillas loaded with seasoned meat and salsa.</p>
+                <button class="view-btn">View Recipe →</button>
+              </div>
+            </article>
+
+            <article class="recipe-card" data-cuisine="indian" data-id="5">
+              <img src="https://images.unsplash.com/photo-1574653853027-5382a3d23a15?w=400" alt="Biryani" />
+              <div class="card-body">
+                <span class="tag">Indian</span>
+                <h3>Chicken Biryani</h3>
+                <p>Fragrant basmati rice layered with spiced chicken.</p>
+                <button class="view-btn">View Recipe →</button>
+              </div>
+            </article>
+
+            <article class="recipe-card" data-cuisine="italian" data-id="6">
+              <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400" alt="Margherita Pizza" />
+              <div class="card-body">
+                <span class="tag">Italian</span>
+                <h3>Margherita Pizza</h3>
+                <p>Classic Neapolitan pizza with tomato and mozzarella.</p>
+                <button class="view-btn">View Recipe →</button>
+              </div>
+            </article>
+
+          </div>
+        </section>
+
+        <section id="about">
+          <h2>About TasteCraft</h2>
+          <p>TasteCraft is your go-to destination for discovering delicious recipes from every corner of the world.</p>
+        </section>
+
+        <section id="contact">
+          <h2>Contact</h2>
+          <p>Have a recipe to share? Reach us at <a href="mailto:hello@tastecraft.com">hello@tastecraft.com</a></p>
+        </section>
+
+      </main>
+
+      <footer>
+        <p>© 2026 TasteCraft. Made with HTML, CSS & JS.</p>
+      </footer>
+
+    </div>
+
+    <!--Detail Page-->
+    <div id="detail-page" class="hidden">
+
+      <button id="back-btn">← Back to Recipes</button>
+
+      <div id="parallax-hero">
+        <img id="detail-img" src="" alt="" />
+        <div id="detail-hero-text">
+          <span id="detail-country"></span>
+          <h1 id="detail-name"></h1>
+        </div>
+      </div>
+
+      <div id="detail-content">
+
+        <section id="detail-ingredients">
+          <h2>Ingredients</h2>
+          <ul id="ingredients-list"></ul>
+        </section>
+
+        <section id="detail-steps">
+          <h2>How to Make It</h2>
+          <ol id="steps-list"></ol>
+        </section>
+
+      </div>
+
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
