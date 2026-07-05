@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TasteCraft | Discover Recipes</title>
     <link rel="stylesheet" href="styles.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
   </head>
   <body>
 
@@ -65,14 +64,84 @@
           </div>
         </section>
 
+        <section id="submit-recipe">
+          <h2>Submit a Recipe</h2>
+          <p>Know a dish we're missing? Add it to TasteCraft.</p>
+
+          <div class="submit-form-wrap">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Recipe Name *</label>
+                <input type="text" id="sr-name" placeholder="e.g. Fried Momo" />
+              </div>
+              <div class="form-group">
+                <label>Diet *</label>
+                <select id="sr-diet">
+                  <option value="veg">🥦 Vegetarian</option>
+                  <option value="egg">🥚 Eggetarian</option>
+                  <option value="nonveg">🍗 Non-Vegetarian</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Cuisine *</label>
+                <input type="text" id="sr-cuisine" placeholder="e.g. Nepali" />
+              </div>
+              <div class="form-group">
+                <label>Country *</label>
+                <input type="text" id="sr-country" placeholder="e.g. Nepal" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Description *</label>
+              <input type="text" id="sr-description" placeholder="One line about the dish" />
+            </div>
+
+            <div class="form-group">
+              <label>Image URL (optional)</label>
+              <input type="text" id="sr-img" placeholder="https://..." />
+            </div>
+
+            <div class="form-group">
+              <label>Ingredients * <span class="hint">(one per line)</span></label>
+              <textarea id="sr-ingredients" rows="5" placeholder="500g chicken&#10;2 cups flour&#10;1 tsp salt"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Steps * <span class="hint">(one per line)</span></label>
+              <textarea id="sr-steps" rows="6" placeholder="Mix flour and water into dough.&#10;Fill and fold dumplings.&#10;Fry until golden."></textarea>
+            </div>
+
+            <button id="sr-submit" class="btn-submit">Submit Recipe</button>
+            <div id="sr-feedback"></div>
+          </div>
+        </section>
+
         <section id="about">
           <h2>About TasteCraft</h2>
           <p>TasteCraft is your go-to destination for discovering delicious recipes from every corner of the world.</p>
         </section>
 
         <section id="contact">
-          <h2>Contact</h2>
-          <p>Have a recipe to share? Reach us at <a href="mailto:hello@tastecraft.com">hello@tastecraft.com</a></p>
+          <h2>Contact Us</h2>
+          <p>Have a recipe to share or feedback to give?</p>
+
+          <div class="contact-form-wrap">
+            <div class="form-group">
+              <input type="text" id="contact-name" placeholder="Your name" />
+            </div>
+            <div class="form-group">
+              <input type="email" id="contact-email" placeholder="Your email" />
+            </div>
+            <div class="form-group">
+              <textarea id="contact-message" placeholder="Your message (min 10 characters)" rows="4"></textarea>
+            </div>
+            <button id="contact-submit" class="btn-submit">Send Message</button>
+            <div id="contact-feedback"></div>
+          </div>
         </section>
 
       </main>
@@ -89,7 +158,7 @@
       <button id="back-btn">← Back to Recipes</button>
 
       <div id="parallax-hero">
-        <img id="detail-img" src="" alt="" />
+        <img id="detail-img" src="" alt="" width="900" height="600" decoding="async" />
         <div id="detail-hero-text">
           <span id="detail-country"></span>
           <h1 id="detail-name"></h1>

@@ -10,3 +10,7 @@ coverage/
 dist/
 build/
 .DS_Store
+backend/database/tastecraft.db
+backend/database/tastecraft.db-wal
+backend/database/tastecraft.db-shm
+backend/database/tastecraft.db-journal

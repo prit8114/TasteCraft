@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "start": "node backend/server.js",
-  "dev": "node backend/server.js"
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,11 @@
   },
   "homepage": "https://github.com/prit8114/TasteCraft#readme",
   "dependencies": {
+    "better-sqlite3": "^12.11.1",
     "cors": "^2.8.6",
     "express": "^5.2.1"
+  },
+  "allowScripts": {
+    "better-sqlite3@12.11.1": true
   }
 }

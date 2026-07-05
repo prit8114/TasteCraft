@@ -1,4 +1,6 @@
 // Simple in-memory cache
+const { stmt } = require('../database/db');
+const localRecipes = require('../data/recipes');
 const cache = new Map();
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
@@ -19,6 +21,62 @@ function getCached(key) {
 
 function setCache(key, data) {
   cache.set(key, { data, timestamp: Date.now() });
+}
+
+function classifyIngredients(items = []) {
+  const nonVegKeywords = [
+    'chicken', 'beef', 'pork', 'lamb', 'mutton', 'fish', 'prawn',
+    'shrimp', 'bacon', 'turkey', 'salmon', 'tuna', 'crab', 'lobster',
+    'anchovy', 'sardine', 'meat', 'sausage', 'ham', 'duck', 'veal'
+  ];
+  const eggKeywords = ['egg', 'eggs'];
+  const normalized = items.map(item => String(item).toLowerCase());
+
+  const hasNonVeg = normalized.some(item => nonVegKeywords.some(keyword => item.includes(keyword)));
+  const hasEgg = normalized.some(item => eggKeywords.some(keyword => item.includes(keyword)));
+
+  if (hasNonVeg) return 'nonveg';
+  if (hasEgg) return 'egg';
+  return 'veg';
+}
+
+function normalizeLocalRecipe(recipe) {
+  return {
+    id: String(recipe.id),
+    name: recipe.name,
+    cuisine: recipe.cuisine.toLowerCase(),
+    country: recipe.country || 'International',
+    category: recipe.category || '',
+    img: recipe.img,
+    description: recipe.description || 'A delicious recipe.',
+    ingredients: recipe.ingredients || [],
+    steps: recipe.steps || [],
+    diet: classifyIngredients(recipe.ingredients || []),
+    source: 'local'
+  };
+}
+
+function fetchLocalRecipes() {
+  return localRecipes.map(normalizeLocalRecipe);
+}
+
+function fetchLocalAreaMeals(area) {
+  const normalizedArea = area.toLowerCase();
+  return localRecipes
+    .filter(recipe => recipe.cuisine.toLowerCase() === normalizedArea)
+    .map(normalizeLocalRecipe);
+}
+
+function searchLocalRecipes(q) {
+  const term = q.trim().toLowerCase();
+  return localRecipes
+    .filter(recipe => {
+      const haystack = [recipe.name, recipe.cuisine, recipe.country, recipe.description || '']
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(term);
+    })
+    .map(normalizeLocalRecipe);
 }
 
 const express = require('express');
@@ -98,22 +156,25 @@ async function fetchPopularRecipes() {
   );
 
   const results = await Promise.all(promises);
-  return results.flat();
+  return [...fetchLocalRecipes(), ...results.flat()];
 }
 
 async function fetchAreaMeals(area) {
   const response = await fetch(`${BASE_URL}/filter.php?a=${encodeURIComponent(area)}`);
   const data = await response.json();
 
-  if (!data.meals) return [];
+  const localMeals = fetchLocalAreaMeals(area);
+  if (!data.meals) return localMeals;
 
-  return data.meals.slice(0, 20).map(m => ({
+  const mealdbMeals = data.meals.slice(0, 20).map(m => ({
     id: m.idMeal,
     name: m.strMeal,
     img: m.strMealThumb,
     cuisine: area.toLowerCase(),
     country: area
   }));
+
+  return [...localMeals, ...mealdbMeals];
 }
 
 async function fetchSearchMeals(q) {
@@ -136,7 +197,7 @@ async function fetchRecipeById(id) {
   return formatMeal(data.meals[0]);
 }
 
-// GET /api/recipes/search?q=chicken
+// GET /api/recipes/search?q= — merged TheMealDB + user recipes
 router.get('/search', async (req, res) => {
   const { q } = req.query;
   if (!q || q.trim().length < 2) {
@@ -145,25 +206,39 @@ router.get('/search', async (req, res) => {
 
   const cacheKey = `search:${q.trim().toLowerCase()}`;
   const cachedEntry = getCacheEntry(cacheKey);
-  if (cachedEntry) {
-    if (!cachedEntry.data.length) {
-      return res.status(404).json({ success: false, message: `No recipes found for "${q}"` });
-    }
 
-    return res.status(200).json({ success: true, count: cachedEntry.data.length, data: cachedEntry.data, cached: true });
+  const pattern = `%${q.trim()}%`;
+  const userResults = stmt.searchUserRecipes.all(pattern, pattern, pattern).map(row => ({
+    ...row,
+    id: `user_${row.id}`,
+    ingredients: JSON.parse(row.ingredients),
+    steps: JSON.parse(row.steps),
+    isUserSubmitted: true
+  }));
+  const localResults = searchLocalRecipes(q);
+
+  if (cachedEntry && cachedEntry.data.length) {
+    const merged = [...userResults, ...localResults, ...cachedEntry.data];
+    return res.status(200).json({ success: true, count: merged.length, data: merged });
   }
 
   try {
-    const meals = await fetchSearchMeals(q);
-    setCache(cacheKey, meals);
+    const mealdbResults = await fetchSearchMeals(q);
+    setCache(cacheKey, mealdbResults);
 
-    if (!meals.length) {
+    const merged = [...userResults, ...localResults, ...mealdbResults];
+
+    if (!merged.length) {
       return res.status(404).json({ success: false, message: `No recipes found for "${q}"` });
     }
 
-    res.status(200).json({ success: true, count: meals.length, data: meals });
+    res.status(200).json({ success: true, count: merged.length, data: merged });
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Failed to fetch from MealDB', error: err.message });
+    if (userResults.length) {
+      return res.status(200).json({ success: true, count: userResults.length, data: userResults });
+    }
+
+    res.status(500).json({ success: false, message: 'Search failed.', error: err.message });
   }
 });
 
@@ -230,25 +305,56 @@ router.get('/:id', async (req, res) => {
     return res.status(400).json({ success: false, message: 'Invalid recipe ID.' });
   }
 
+  const localRecipe = localRecipes.find(recipe => String(recipe.id) === String(id));
+  if (localRecipe) {
+    return res.status(200).json({ success: true, data: normalizeLocalRecipe(localRecipe), source: 'local' });
+  }
+
+  // 1. Check in-memory cache first (fastest)
   const cacheKey = `recipe:${id}`;
   const cachedEntry = getCacheEntry(cacheKey);
   if (cachedEntry) {
     if (!cachedEntry.data) {
       return res.status(404).json({ success: false, message: `Recipe ${id} not found.` });
     }
-
-    return res.status(200).json({ success: true, data: cachedEntry.data, cached: true });
+    return res.status(200).json({ success: true, data: cachedEntry.data, source: 'memory' });
   }
 
+  // 2. Check SQLite cache (survives server restarts)
+  const dbCached = stmt.getCachedRecipe.get(id);
+  if (dbCached) {
+    const meal = {
+      ...dbCached,
+      ingredients: JSON.parse(dbCached.ingredients),
+      steps: JSON.parse(dbCached.steps)
+    };
+    setCache(cacheKey, meal); // promote to memory cache
+    return res.status(200).json({ success: true, data: meal, source: 'db' });
+  }
+
+  // 3. Fetch from TheMealDB
   try {
     const meal = await fetchRecipeById(id);
-    setCache(cacheKey, meal);
 
     if (!meal) {
+      setCache(cacheKey, null);
       return res.status(404).json({ success: false, message: `Recipe ${id} not found.` });
     }
 
-    res.status(200).json({ success: true, data: meal });
+    // Save to both caches
+    setCache(cacheKey, meal);
+    try {
+      stmt.insertRecipe.run({
+        ...meal,
+        ingredients: JSON.stringify(meal.ingredients),
+        steps: JSON.stringify(meal.steps)
+      });
+    } catch (dbErr) {
+      // DB insert failing shouldn't break the response
+      console.warn('DB cache insert failed:', dbErr.message);
+    }
+
+    res.status(200).json({ success: true, data: meal, source: 'api' });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Failed to fetch recipe', error: err.message });
   }
